@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sqflite/sqflite.dart';
 
+import 'catalogo.dart';
+import 'model_user.dart';
+
 class Home extends StatefulWidget {
   const Home({super.key});
 
@@ -172,7 +175,8 @@ class _HomeState extends State<Home> {
   //  List usuarios = await db.rawQuery(sql);
   //  print("usuarios: ${usuarios.toString()}");
   //}
-  _validateLogin(String email, String password) async {
+
+  Future<User?> _validateLogin(String email, String password) async {
     db = await DatabaseManager.instance.database;
 
     List<Map<String, dynamic>> results = await db.query(
@@ -182,11 +186,18 @@ class _HomeState extends State<Home> {
     );
 
     if (results.isNotEmpty) {
-      print(
-          "FUNCIONOU"); // to do redirecionar para a pagina do catalogo de videos
+      print("FUNCIONOU");
+      return User(
+          id: results[0]['id'],
+          name: results[0]['name'],
+          email: results[0]['email'],
+          password: results[0]['password']);
+
+      // to do redirecionar para a pagina do catalogo de videos
     } else {
-      print(
-          "email ou senha incorretos"); // to do pedir para o usuario tentar novamente
+      print("email ou senha incorretos");
+      return null;
+      // to do pedir para o usuario tentar novamente
     }
   }
 
@@ -289,7 +300,22 @@ class _HomeState extends State<Home> {
           onPressed: () {
             String email = _emailController.text;
             String password = _passwordController.text;
-            _validateLogin(email, password);
+            _validateLogin(email, password).then((value) => {
+                  if (value != null)
+                    {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => Catalogo(value)))
+                    }
+                  else
+                    {
+                      showDialog(
+                          context: context,
+                          builder: (context) => const AlertDialog(
+                              title: Text("Email ou senha incorretos")))
+                    }
+                });
           },
           style: TextButton.styleFrom(
               backgroundColor: Colors.red,
