@@ -1,9 +1,9 @@
-import 'package:catalogo/home.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:catalogo/database.dart';
 import 'package:quickalert/quickalert.dart';
+
 class Signin extends StatefulWidget {
   const Signin({super.key});
 
@@ -17,15 +17,18 @@ class _HomeState extends State<Signin> {
   _validateSignin(String name, String email, String password) async {
     db = await DatabaseManager.instance.database;
 
-    List<Map<String, dynamic>> results = await db.query(  // confere se o email inserido já foi cadastrado
-    'user',
+    List<Map<String, dynamic>> results = await db.query(
+      // confere se o email inserido já foi cadastrado
+      'user',
       where: 'email = ?',
       whereArgs: [email],
-    );  
+    );
 
-
-    if(email.isNotEmpty && name.isNotEmpty && password.isNotEmpty && results.isEmpty ){
-        Map<String, dynamic> userData = {
+    if (email.isNotEmpty &&
+        name.isNotEmpty &&
+        password.isNotEmpty &&
+        results.isEmpty) {
+      Map<String, dynamic> userData = {
         "name": name,
         "email": email,
         "password": password,
@@ -34,17 +37,13 @@ class _HomeState extends State<Signin> {
       await db.insert("user", userData);
       // ignore: use_build_context_synchronously
       QuickAlert.show(
-        context: context,
-        text: "Cadastro feito com sucesso!",
-        confirmBtnText: "voltar",
-        type: QuickAlertType.success,
-        onConfirmBtnTap: () => Navigator.push(
-              context, MaterialPageRoute(builder: (context) => const Home())),
-      );
-      
-
-    }
-    else{
+          context: context,
+          text: "Cadastro feito com sucesso!",
+          confirmBtnText: "voltar",
+          type: QuickAlertType.success,
+          onConfirmBtnTap: () =>
+              Navigator.popUntil(context, (route) => route.isFirst));
+    } else {
       // ignore: use_build_context_synchronously
       QuickAlert.show(
         context: context,
@@ -53,7 +52,6 @@ class _HomeState extends State<Signin> {
         type: QuickAlertType.error,
       );
     }
-  
   }
 
   final TextEditingController _nameController = TextEditingController();

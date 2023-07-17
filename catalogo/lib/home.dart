@@ -2,6 +2,7 @@ import 'package:catalogo/signin.dart';
 import 'package:catalogo/database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:quickalert/quickalert.dart';
 import 'package:sqflite/sqflite.dart';
 
 import 'catalogo.dart';
@@ -310,10 +311,13 @@ class _HomeState extends State<Home> {
                     }
                   else
                     {
-                      showDialog(
-                          context: context,
-                          builder: (context) => const AlertDialog(
-                              title: Text("Email ou senha incorretos")))
+                      QuickAlert.show(
+                        context: context,
+                        title: "Erro",
+                        text: "Email ou Senha Incorretos!",
+                        confirmBtnText: "Entendi",
+                        type: QuickAlertType.error,
+                      )
                     }
                 });
           },
@@ -330,6 +334,14 @@ class _HomeState extends State<Home> {
         width: double.infinity,
         child: ElevatedButton(
           onPressed: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => Catalogo(User(
+                        id: -1,
+                        name: "Visitante",
+                        email: "visitante",
+                        password: "visitante"))));
             // ir para a pagina do catalogo, sem login
           },
           style: TextButton.styleFrom(
