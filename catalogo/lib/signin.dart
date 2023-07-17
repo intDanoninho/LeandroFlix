@@ -1,8 +1,9 @@
+import 'package:catalogo/home.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:catalogo/database.dart';
-
+import 'package:quickalert/quickalert.dart';
 class Signin extends StatefulWidget {
   const Signin({super.key});
 
@@ -16,16 +17,43 @@ class _HomeState extends State<Signin> {
   _validateSignin(String name, String email, String password) async {
     db = await DatabaseManager.instance.database;
 
-    Map<String, dynamic> userData = {
-      "name": name,
-      "email": email,
-      "password": password,
-    };
+    List<Map<String, dynamic>> results = await db.query(  // confere se o email inserido já foi cadastrado
+    'user',
+      where: 'email = ?',
+      whereArgs: [email],
+    );  
 
-    await db.insert("user", userData);
 
-    //to do verificar se o email já está sendo usado e notificar
-    //to do notificar que foi cadastrado corretamente
+    if(email.isNotEmpty && name.isNotEmpty && password.isNotEmpty && results.isEmpty ){
+        Map<String, dynamic> userData = {
+        "name": name,
+        "email": email,
+        "password": password,
+      };
+
+      await db.insert("user", userData);
+      // ignore: use_build_context_synchronously
+      QuickAlert.show(
+        context: context,
+        text: "Cadastro feito com sucesso!",
+        confirmBtnText: "voltar",
+        type: QuickAlertType.success,
+        onConfirmBtnTap: () => Navigator.push(
+              context, MaterialPageRoute(builder: (context) => const Home())),
+      );
+      
+
+    }
+    else{
+      // ignore: use_build_context_synchronously
+      QuickAlert.show(
+        context: context,
+        text: "Email já em uso ou inválido",
+        confirmBtnText: "Entendi",
+        type: QuickAlertType.error,
+      );
+    }
+  
   }
 
   final TextEditingController _nameController = TextEditingController();
