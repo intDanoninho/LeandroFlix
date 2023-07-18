@@ -22,8 +22,8 @@ class _CatalogoState extends State<Catalogo> {
   List<Video> _videos = [];
   List<Genero> _generos = [];
   List<VideoGenero> _videoGeneros = [];
-  List<int> _selectedGeneros = [];
-  int _selectedType = 0;
+  final List<int> _selectedGeneros = [];
+  int _selectedType = 2;
 
   late Database db;
 
@@ -75,17 +75,172 @@ class _CatalogoState extends State<Catalogo> {
     });
   }
 
+  dynamic filtro() {
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: const Text("Selecione os Filtros"),
+              content: SingleChildScrollView(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        children: [
+                          const Text("Tipos",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(fontSize: 20.0)),
+                          const Padding(padding: EdgeInsets.all(5.0)),
+                          Column(
+                            children: [
+                              RadioListTile(
+                                title: const Text("Todos"),
+                                value: 2,
+                                groupValue: _selectedType,
+                                onChanged: (int? value) {
+                                  setState(() {
+                                    _selectedType = value!;
+                                  });
+                                },
+                              ),
+                              RadioListTile(
+                                title: const Text("Filmes"),
+                                value: 0,
+                                groupValue: _selectedType,
+                                onChanged: (int? value) {
+                                  setState(() {
+                                    _selectedType = value!;
+                                  });
+                                },
+                              ),
+                              RadioListTile(
+                                title: const Text("Séries"),
+                                value: 1,
+                                groupValue: _selectedType,
+                                onChanged: (int? value) {
+                                  setState(() {
+                                    _selectedType = value!;
+                                  });
+                                },
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Divider(
+                      height: 10,
+                      thickness: 1,
+                      indent: 20,
+                      endIndent: 20,
+                      color: Colors.black,
+                    ),
+                    Expanded(
+                      flex: 2,
+                      child: Column(
+                        children: [
+                          const Text("Generos",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(fontSize: 20.0)),
+                          const Padding(padding: EdgeInsets.all(5.0)),
+                          Column(
+                            children: _generos.map((genero) {
+                              return CheckboxListTile(
+                                title: Text(
+                                  genero.name,
+                                ),
+                                value: _selectedGeneros.contains(genero.id),
+                                onChanged: (bool? value) {
+                                  setState(() {
+                                    if (value != null && value) {
+                                      _selectedGeneros.add(genero.id);
+                                    } else {
+                                      _selectedGeneros.remove(genero.id);
+                                    }
+                                  });
+                                },
+                              );
+                            }).toList(),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  child: const Text('Close'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    _updateParentState();
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  _updateParentState() {
+    setState(() {});
+  }
+
   List<Video> getVideoFiltrado() {
     if (_selectedType == 0) {
-      return _videos;
-    }
-    List<Video> videos = [];
-    for (VideoGenero videoGenero in _videoGeneros) {
-      if (_selectedGeneros.contains(videoGenero.genreId)) {
-        videos.add(_getVideoById(videoGenero.videoId));
+      if (_selectedGeneros.isEmpty) {
+        return _videos.where((video) => video.type == 0).toList();
       }
+
+      List<Video> videos = [];
+      for (VideoGenero videoGenero in _videoGeneros) {
+        if (_selectedGeneros.contains(videoGenero.genreId)) {
+          if (!videos.contains(_getVideoById(videoGenero.videoId))) {
+            if (_getVideoById(videoGenero.videoId).type == 0) {
+              videos.add(_getVideoById(videoGenero.videoId));
+            }
+          }
+        }
+      }
+      return videos;
+    } else if (_selectedType == 1) {
+      if (_selectedGeneros.isEmpty) {
+        return _videos.where((video) => video.type == 1).toList();
+      }
+
+      List<Video> videos = [];
+      for (VideoGenero videoGenero in _videoGeneros) {
+        if (_selectedGeneros.contains(videoGenero.genreId)) {
+          if (!videos.contains(_getVideoById(videoGenero.videoId))) {
+            if (_getVideoById(videoGenero.videoId).type == 1) {
+              videos.add(_getVideoById(videoGenero.videoId));
+            }
+          }
+        }
+      }
+      return videos;
+    } else if (_selectedType == 2) {
+      if (_selectedGeneros.isEmpty) {
+        return _videos;
+      }
+      List<Video> videos = [];
+      for (VideoGenero videoGenero in _videoGeneros) {
+        if (_selectedGeneros.contains(videoGenero.genreId)) {
+          if (!videos.contains(_getVideoById(videoGenero.videoId))) {
+            videos.add(_getVideoById(videoGenero.videoId));
+          }
+        }
+      }
+      return videos;
     }
-    return videos;
+
+    return [];
   }
 
   Video _getVideoById(int id) {
@@ -175,39 +330,15 @@ class _CatalogoState extends State<Catalogo> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title:
-            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          const Text("LeandroFlix"),
-          const Padding(padding: EdgeInsets.all(10.0)),
+        title: const Text("LeandroFlix"),
+        actions: [
           IconButton(
-              onPressed: () {
-                showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: const Text("Selecione um Genero"),
-                        content: SingleChildScrollView(
-                          child: Column(
-                              children: _generos.map((genero) {
-                            return CheckboxListTile(
-                                title: Text(genero.name),
-                                value: _selectedGeneros.contains(genero.id),
-                                onChanged: (bool? value) {
-                                  setState(() {
-                                    if (value != null && value) {
-                                      _selectedGeneros.add(genero.id);
-                                    } else {
-                                      _selectedGeneros.remove(genero.id);
-                                    }
-                                  });
-                                });
-                          }).toList()),
-                        ),
-                      );
-                    });
-              },
-              icon: const Icon(Icons.filter_alt_outlined))
-        ]),
+            onPressed: () {
+              filtro();
+            },
+            icon: const Icon(Icons.filter_alt_outlined),
+          )
+        ],
         backgroundColor: Colors.red,
       ),
       body: AnnotatedRegion<SystemUiOverlayStyle>(
@@ -257,7 +388,7 @@ class _CatalogoState extends State<Catalogo> {
                                         child: Column(
                                           children: [
                                             //Image.network(
-                                            //    video.thumbnailImageId),
+                                            //video.thumbnailImageId),
                                             const Padding(
                                                 padding: EdgeInsets.all(10.0)),
                                             Text(video.description),

@@ -6,6 +6,7 @@ import 'package:quickalert/quickalert.dart';
 import 'package:sqflite/sqflite.dart';
 
 import 'catalogo.dart';
+import 'controller_db.dart';
 import 'model_user.dart';
 
 class Home extends StatefulWidget {
@@ -17,165 +18,36 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   late Database db;
+  DbControls dbControls = DbControls();
 
   final TextEditingController _emailController =
       TextEditingController(); //serve para pegar o input do usuário no campo email
   final TextEditingController _passwordController =
       TextEditingController(); //serve para pegar o input do usuário no campo senha
-
-  _save() async {
-    db = await DatabaseManager
-        .instance.database; // pega o db criado em database.dart
-    await db.insert('user', {
-      'name': 'luciano',
-      'email': 'luciano@gmail.com',
-      'password': '123456',
-    });
-
-    await db.insert('user', {
-      'name': 'Teste 2',
-      'email': 'teste2@teste',
-      'password': '123456',
-    });
-
-    await db.insert('user', {
-      'name': 'Teste 3',
-      'email': 'teste3@teste',
-      'password': '123456',
-    });
-
-    await db.insert('user', {
-      'name': 'Teste 4',
-      'email': 'teste4@teste',
-      'password': '123456',
-    });
-
-    await db.insert('user', {
-      'name': 'Teste 5',
-      'email': 'teste5@teste',
-      'password': '123456',
-    });
-
-    await db.insert('genre', {
-      'name': 'Comedia',
-    });
-
-    await db.insert('genre', {
-      'name': 'Terror',
-    });
-
-    await db.insert('genre', {
-      'name': 'Aventura',
-    });
-
-    await db.insert('genre', {
-      'name': 'Suspense',
-    });
-
-    await db.insert('genre', {
-      'name': 'Ação',
-    });
-
-    await db.insert('video', {
-      'name': 'Filme 1',
-      'description': 'Descrição 1',
-      'type': 0,
-      'ageRestriction': '18 anos',
-      'durationMinutes': 120,
-      'thumbnailImageId': 'url imagem',
-      'releaseDate': '01/01/2020',
-    });
-
-    await db.insert('video', {
-      'name': 'Filme 2',
-      'description': 'Descrição 2',
-      'type': 0,
-      'ageRestriction': '18 anos',
-      'durationMinutes': 120,
-      'thumbnailImageId': 'url imagem',
-      'releaseDate': '01/01/2020',
-    });
-
-    await db.insert('video', {
-      'name': 'Filme 3',
-      'description': 'Descrição 3',
-      'type': 0,
-      'ageRestriction': '18 anos',
-      'durationMinutes': 120,
-      'thumbnailImageId': 'url imagem',
-      'releaseDate': '01/01/2020',
-    });
-
-    await db.insert('video', {
-      'name': 'Filme 4',
-      'description': 'Descrição 4',
-      'type': 0,
-      'ageRestriction': '18 anos',
-      'durationMinutes': 120,
-      'thumbnailImageId': 'url imagem',
-      'releaseDate': '01/01/2020',
-    });
-
-    await db.insert('video', {
-      'name': 'Filme 5',
-      'description': 'Descrição 5',
-      'type': 0,
-      'ageRestriction': '18 anos',
-      'durationMinutes': 120,
-      'thumbnailImageId': 'url imagem',
-      'releaseDate': '01/01/2020',
-    });
-
-    await db.insert('video_genre', {
-      'videoid': 1,
-      'genreid': 1,
-    });
-
-    await db.insert('video_genre', {
-      'videoid': 1,
-      'genreid': 2,
-    });
-
-    await db.insert('video_genre', {
-      'videoid': 2,
-      'genreid': 5,
-    });
-
-    await db.insert('video_genre', {
-      'videoid': 3,
-      'genreid': 4,
-    });
-
-    await db.insert('video_genre', {
-      'videoid': 4,
-      'genreid': 3,
-    });
-
-    await db.insert('video_genre', {
-      'videoid': 5,
-      'genreid': 1,
-    });
-
-    await db.insert('video_genre', {
-      'videoid': 5,
-      'genreid': 5,
-    });
-  }
   // usei o list para ver se um novo usuário foi cadastrado corretamente
 
-  // _list() async {
-  //   db = await DatabaseManager.instance.database;
+  _list() async {
+    db = await DatabaseManager.instance.database;
 
-  //   String sql = "SELECT * FROM user;";
-  //String sql = "SELECT * FROM usuarios WHERE idade < 20";
-  //String sql = "SELECT * FROM usuarios WHERE idade > 20 AND idade < 25";
-  //String sql = "SELECT * FROM usuarios WHERE idade BETWEEN 20 AND 25";
-  ///String sql = "SELECT * FROM usuarios WHERE nome LIKE 'ana%'";
-  //String sql = "SELECT * FROM usuarios ORDER BY nome DESC";
+    String sql = "SELECT * FROM video;";
+    //String sql = "SELECT * FROM usuarios WHERE idade < 20";
+    //String sql = "SELECT * FROM usuarios WHERE idade > 20 AND idade < 25";
+    //String sql = "SELECT * FROM usuarios WHERE idade BETWEEN 20 AND 25";
+    ///String sql = "SELECT * FROM usuarios WHERE nome LIKE 'ana%'";
+    //String sql = "SELECT * FROM usuarios ORDER BY nome DESC";
 
-  //  List usuarios = await db.rawQuery(sql);
-  //  print("usuarios: ${usuarios.toString()}");
-  //}
+    List usuarios = await db.rawQuery(sql);
+    print("usuarios: ${usuarios.toString()}");
+  }
+
+  _start() async {
+    db = await DatabaseManager.instance.database;
+    String sql = "SELECT * FROM video;";
+    List videos = await db.rawQuery(sql);
+    if (videos.isEmpty) {
+      dbControls.criarBase();
+    }
+  }
 
   Future<User?> _validateLogin(String email, String password) async {
     db = await DatabaseManager.instance.database;
@@ -354,8 +226,9 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    //_save();
-    //_list();
+    //_clear();
+    _start();
+    _list();
 
     return Scaffold(
         appBar: AppBar(
