@@ -27,32 +27,33 @@ class _HomeState extends State<Home> {
   // usei o list para ver se um novo usuário foi cadastrado corretamente
 
   _list() async {
-    db = await DatabaseManager.instance.database;
+    Database? db = await DatabaseHelper().db;
 
-    String sql = "SELECT * FROM video;";
+    String sql = "SELECT * FROM user;";
     //String sql = "SELECT * FROM usuarios WHERE idade < 20";
     //String sql = "SELECT * FROM usuarios WHERE idade > 20 AND idade < 25";
     //String sql = "SELECT * FROM usuarios WHERE idade BETWEEN 20 AND 25";
     ///String sql = "SELECT * FROM usuarios WHERE nome LIKE 'ana%'";
     //String sql = "SELECT * FROM usuarios ORDER BY nome DESC";
 
-    List usuarios = await db.rawQuery(sql);
+    List usuarios = await db!.rawQuery(sql);
     print("usuarios: ${usuarios.toString()}");
   }
 
   _start() async {
-    db = await DatabaseManager.instance.database;
-    String sql = "SELECT * FROM video;";
-    List videos = await db.rawQuery(sql);
+    Database? db = await DatabaseHelper().db;
+
+    String sql = "SELECT * FROM user;";
+    List videos = await db!.rawQuery(sql);
     if (videos.isEmpty) {
       dbControls.criarBase();
     }
   }
 
   Future<User?> _validateLogin(String email, String password) async {
-    db = await DatabaseManager.instance.database;
+    Database? db = await DatabaseHelper().db;
 
-    List<Map<String, dynamic>> results = await db.query(
+    List<Map<String, dynamic>> results = await db!.query(
       'user',
       where: 'email = ? AND password = ?',
       whereArgs: [email, password],

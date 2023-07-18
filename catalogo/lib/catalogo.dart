@@ -34,10 +34,10 @@ class _CatalogoState extends State<Catalogo> {
   }
 
   Future<void> _initDatabase() async {
-    db = await DatabaseManager.instance.database;
+    Database? db = await DatabaseHelper().db;
 
     final List<Map<String, dynamic>> genreData =
-        await db.rawQuery('SELECT * FROM genre');
+        await db!.rawQuery('SELECT * FROM genre');
     final List<Map<String, dynamic>> videoGenreData =
         await db.rawQuery('SELECT * FROM video_genre');
     final List<Map<String, dynamic>> videoData =
@@ -85,91 +85,88 @@ class _CatalogoState extends State<Catalogo> {
             return AlertDialog(
               title: const Text("Selecione os Filtros"),
               content: SingleChildScrollView(
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: Column(
-                        children: [
-                          const Text("Tipos",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(fontSize: 20.0)),
-                          const Padding(padding: EdgeInsets.all(5.0)),
-                          Column(
-                            children: [
-                              RadioListTile(
-                                title: const Text("Todos"),
-                                value: 2,
-                                groupValue: _selectedType,
-                                onChanged: (int? value) {
-                                  setState(() {
-                                    _selectedType = value!;
-                                  });
-                                },
+                child: Expanded(
+                  flex: 2,
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const Text("Tipos",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(fontSize: 20.0)),
+                        const Padding(padding: EdgeInsets.all(5.0)),
+                        Column(
+                          children: [
+                            RadioListTile(
+                              title: const Row(
+                                children: [
+                                  Padding(padding: EdgeInsets.only(left: 60)),
+                                  Text("Todos"),
+                                ],
                               ),
-                              RadioListTile(
-                                title: const Text("Filmes"),
-                                value: 0,
-                                groupValue: _selectedType,
-                                onChanged: (int? value) {
-                                  setState(() {
-                                    _selectedType = value!;
-                                  });
-                                },
+                              value: 2,
+                              groupValue: _selectedType,
+                              onChanged: (int? value) {
+                                setState(() {
+                                  _selectedType = value!;
+                                });
+                              },
+                            ),
+                            RadioListTile(
+                              title: const Row(
+                                children: [
+                                  Padding(padding: EdgeInsets.only(left: 60)),
+                                  Text("Filmes"),
+                                ],
                               ),
-                              RadioListTile(
-                                title: const Text("Séries"),
-                                value: 1,
-                                groupValue: _selectedType,
-                                onChanged: (int? value) {
-                                  setState(() {
-                                    _selectedType = value!;
-                                  });
-                                },
+                              value: 0,
+                              groupValue: _selectedType,
+                              onChanged: (int? value) {
+                                setState(() {
+                                  _selectedType = value!;
+                                });
+                              },
+                            ),
+                            RadioListTile(
+                              title: const Row(
+                                children: [
+                                  Padding(padding: EdgeInsets.only(left: 60)),
+                                  Text("Series"),
+                                ],
                               ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                    const Divider(
-                      height: 10,
-                      thickness: 1,
-                      indent: 20,
-                      endIndent: 20,
-                      color: Colors.black,
-                    ),
-                    Expanded(
-                      flex: 2,
-                      child: Column(
-                        children: [
-                          const Text("Generos",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(fontSize: 20.0)),
-                          const Padding(padding: EdgeInsets.all(5.0)),
-                          Column(
-                            children: _generos.map((genero) {
-                              return CheckboxListTile(
-                                title: Text(
-                                  genero.name,
-                                ),
-                                value: _selectedGeneros.contains(genero.id),
-                                onChanged: (bool? value) {
-                                  setState(() {
-                                    if (value != null && value) {
-                                      _selectedGeneros.add(genero.id);
-                                    } else {
-                                      _selectedGeneros.remove(genero.id);
-                                    }
-                                  });
-                                },
-                              );
-                            }).toList(),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
+                              value: 1,
+                              groupValue: _selectedType,
+                              onChanged: (int? value) {
+                                setState(() {
+                                  _selectedType = value!;
+                                });
+                              },
+                            ),
+                          ],
+                        ),
+                        const Text("Generos",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(fontSize: 20.0)),
+                        const Padding(padding: EdgeInsets.all(5.0)),
+                        Column(
+                          children: _generos.map((genero) {
+                            return CheckboxListTile(
+                              title: Text(
+                                genero.name,
+                              ),
+                              value: _selectedGeneros.contains(genero.id),
+                              onChanged: (bool? value) {
+                                setState(() {
+                                  if (value != null && value) {
+                                    _selectedGeneros.add(genero.id);
+                                  } else {
+                                    _selectedGeneros.remove(genero.id);
+                                  }
+                                });
+                              },
+                            );
+                          }).toList(),
+                        ),
+                      ]),
                 ),
               ),
               actions: [
@@ -301,7 +298,8 @@ class _CatalogoState extends State<Catalogo> {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const MyVideos()),
+                    MaterialPageRoute(
+                        builder: (context) => MyVideos(widget.user)),
                   );
                 },
                 child: const Row(

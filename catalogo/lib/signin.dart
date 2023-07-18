@@ -15,9 +15,9 @@ class _HomeState extends State<Signin> {
   late Database db;
 
   _validateSignin(String name, String email, String password) async {
-    db = await DatabaseManager.instance.database;
+    Database? db = await DatabaseHelper().db;
 
-    List<Map<String, dynamic>> results = await db.query(
+    List<Map<String, dynamic>> results = await db!.query(
       // confere se o email inserido já foi cadastrado
       'user',
       where: 'email = ?',

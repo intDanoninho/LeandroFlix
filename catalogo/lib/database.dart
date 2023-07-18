@@ -1,60 +1,76 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
-class DatabaseManager{
-
-  DatabaseManager._();
-
-  static final DatabaseManager instance = DatabaseManager._();
+class DatabaseHelper {
+  static final DatabaseHelper _instance = DatabaseHelper.internal();
+  factory DatabaseHelper() => _instance;
 
   static Database? _db;
-   get database async{
-     if (_db!=null) return _db;
 
-     return await _initDatabase();
-   }
-
-   _initDatabase() async{
-
-    return await openDatabase(
-      join(await getDatabasesPath(), 'banco.db'),
-      version: 1,
-      onCreate: (db, version) async {
-    // Cria as tabelas
-      String sql ="""
-      CREATE TABLE user(
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name VARCHAR NOT NULL,
-        email VARCHAR NOT NULL,
-        password VARCHAR NOT NULL
-      );
-
-      CREATE TABLE genre(
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name VARCHAR NOT NULL
-      );
-
-      CREATE TABLE video(
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name VARCHAR(2) NOT NULL,
-        description TEXT NOT NULL,
-        type INTEGER NOT NULL,
-        ageRestriction VARCHAR NOT NULL,
-        durationMinutes INTEGER NOT NULL,
-        thumbnailImageId VARCHAR NOT NULL,
-        releaseDate TEXT NOT NULL
-      );
-
-      CREATE TABLE video_genre(
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        videoid INTEGER NOT NULL,
-        genreid INTEGER NOT NULL,
-        FOREIGN KEY(videoid) REFERENCES video(id),
-        FOREIGN KEY(genreid) REFERENCES genre(id)
-      );
-    """;
-      await db.execute(sql);
+  Future<Database?> get db async {
+    if (_db != null) {
+      return _db;
     }
+    _db = await initDb();
+    return _db;
+  }
+
+  DatabaseHelper.internal();
+
+  Future<Database> initDb() async {
+    String databasesPath = await getDatabasesPath();
+    String path = join(databasesPath, 'mydatabase.db');
+
+    // Delete old database (if exists)
+    await deleteDatabase(path);
+
+    // Open/create the database at a given path
+    Database database = await openDatabase(
+      path,
+      version: 1,
+      onCreate: (Database db, int version) async {
+        await db.execute('''
+          CREATE TABLE user(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            email TEXT NOT NULL,
+            password TEXT NOT NULL
+          )''');
+
+        await db.execute('''CREATE TABLE genre(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL
+          )''');
+
+        await db.execute('''CREATE TABLE video(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            description TEXT NOT NULL,
+            type INTEGER NOT NULL,
+            ageRestriction TEXT NOT NULL,
+            durationMinutes INTEGER NOT NULL,
+            thumbnailImageId TEXT NOT NULL,
+            releaseDate TEXT NOT NULL
+          )''');
+
+        await db.execute('''CREATE TABLE video_genre(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            videoid INTEGER NOT NULL,
+            genreid INTEGER NOT NULL,
+            FOREIGN KEY(videoid) REFERENCES video(id),
+            FOREIGN KEY(genreid) REFERENCES genre(id)
+          )''');
+
+        await db.execute('''CREATE TABLE user_video(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            userid INTEGER NOT NULL,
+            videoid INTEGER NOT NULL,
+            FOREIGN KEY(userid) REFERENCES user(id),
+            FOREIGN KEY(videoid) REFERENCES video(id)
+          )''');
+      },
     );
+
+    return database;
   }
 }

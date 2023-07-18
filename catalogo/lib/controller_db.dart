@@ -5,8 +5,9 @@ class DbControls {
   late Database db;
 
   criarGenero(String nome) async {
-    db = await DatabaseManager.instance.database;
-    await db.insert('genre', {'name': nome});
+    Database? db = await DatabaseHelper().db;
+
+    await db!.insert('genre', {'name': nome});
   }
 
   criarVideo(
@@ -18,8 +19,9 @@ class DbControls {
       String thumbnailImageId,
       String releaseDate,
       List<int> genres) async {
-    db = await DatabaseManager.instance.database;
-    dynamic result = await db.insert('video', {
+    Database? db = await DatabaseHelper().db;
+
+    dynamic result = await db!.insert('video', {
       'name': nome,
       'description': descripiton,
       'type': type,
