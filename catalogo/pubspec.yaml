@@ -65,6 +65,18 @@ flutter:
   # assets:
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
+  assets:
+    - thumb/BomDia.jpg
+    - thumb/IrmaoJorel.jpg
+    - thumb/CentralDoBrasil.jpg
+    - thumb/CidadedeDeus.jpg
+    - thumb/CidadeInvisivel.jpg
+    - thumb/OPoco.jpg
+    - thumb/TropaDeElite.jpg
+    - thumb/RickeMorty.jpg
+    - thumb/ReiLeao.jpg
+    - thumb/O_auto_da_compadecida.jpg
+    - thumb/Gambito.jpg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

@@ -1,3 +1,4 @@
+import 'package:catalogo/MoviePage.dart';
 import 'package:catalogo/model_video.dart';
 import 'package:catalogo/model_videogenero.dart';
 import 'package:catalogo/signin.dart';
@@ -383,29 +384,23 @@ class _CatalogoState extends State<Catalogo> {
                         children: getVideoFiltrado().map((video) {
                           return GestureDetector(
                             onTap: () {
-                              showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return AlertDialog(
-                                      title: Text(video.name),
-                                      content: SingleChildScrollView(
-                                        child: Column(
-                                          children: [
-                                            //Image.network(
-                                            //video.thumbnailImageId),
-                                            const Padding(
-                                                padding: EdgeInsets.all(10.0)),
-                                            Text(video.description),
-                                          ],
-                                        ),
-                                      ),
-                                    );
-                                  });
+                              print(video.thumbnailImageId);
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                builder: (context) => MoviePage()));
                             },
                             child: Card(
                               child: Column(
                                 children: [
-                                  //Image.network(video.thumbnailImageId),
+                                  Container(
+                                    color: const Color(0xFF57585a),
+                                    height: 156, 
+                                    width: 200, 
+                                    child: Image.asset(
+                                      video.thumbnailImageId,
+                                    ),
+                                  ),
                                   Text(video.name),
                                 ],
                               ),

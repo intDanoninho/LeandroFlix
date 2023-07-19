@@ -18,11 +18,13 @@ class _MyVideosState extends State<MyVideos> {
 
   Widget barraSuperior() {
     return Container(
+      color: const Color(0xFF57585a),
       padding: const EdgeInsets.all(10.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           ElevatedButton(
+              style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(Colors.red)),
               onPressed: () {},
               child: const Row(
                 children: [
@@ -32,6 +34,7 @@ class _MyVideosState extends State<MyVideos> {
               )),
           const Padding(padding: EdgeInsets.all(10.0)),
           ElevatedButton(
+            style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(Colors.red)),
             onPressed: () {
               Navigator.popUntil(context, ModalRoute.withName('/'));
             },

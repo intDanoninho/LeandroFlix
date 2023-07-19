@@ -56,7 +56,7 @@ class DbControls {
         0,
         "Livre",
         88,
-        "https://br.web.img3.acsta.net/c_310_420/medias/nmedia/18/87/84/28/19962110.jpg",
+        "thumb/ReiLeao.jpg",
         "1994-06-15",
         [10, 2, 3, 9]);
     criarVideo(
@@ -65,7 +65,7 @@ class DbControls {
         0,
         "Livre",
         104,
-        "https://br.web.img3.acsta.net/c_310_420/pictures/210/134/21013472_20131010182211324.jpg",
+        "thumb/O_auto_da_compadecida.jpg",
         "2000-09-15",
         [2, 3]);
     criarVideo(
@@ -74,7 +74,7 @@ class DbControls {
         0,
         "16 anos",
         130,
-        "https://br.web.img2.acsta.net/c_310_420/medias/nmedia/18/87/02/76/19871246.jpg",
+        "thumb/CidadedeDeus.jpg",
         "2002-08-30",
         [4, 8]);
     criarVideo(
@@ -83,7 +83,7 @@ class DbControls {
         0,
         "16 anos",
         115,
-        "https://br.web.img2.acsta.net/c_310_420/medias/nmedia/18/87/22/38/19873277.jpg",
+        "thumb/TropaDeElite.jpg",
         "2007-10-12",
         [1, 4, 8]);
     criarVideo(
@@ -92,7 +92,7 @@ class DbControls {
         0,
         "12 anos",
         113,
-        "https://br.web.img2.acsta.net/c_310_420/medias/nmedia/18/87/30/56/19874127.jpg",
+        "thumb/CentralDoBrasil.jpg",
         "1998-01-16",
         [4]);
     criarVideo(
@@ -101,7 +101,7 @@ class DbControls {
         1,
         "16 anos",
         40,
-        "https://br.web.img3.acsta.net/c_310_420/pictures/21/01/20/17/31/5372090.jpg",
+        "thumb/CidadeInvisivel.jpg",
         "2021-02-05",
         [1, 4, 8]);
     criarVideo(
@@ -110,7 +110,7 @@ class DbControls {
         1,
         "16 anos",
         40,
-        "https://br.web.img3.acsta.net/c_310_420/pictures/20/09/17/08/51/5272756.jpg",
+        "thumb/BomDia.jpg",
         "2020-10-01",
         [1, 4, 8]);
     criarVideo(
@@ -119,7 +119,7 @@ class DbControls {
         1,
         "Livre",
         60,
-        "https://br.web.img2.acsta.net/c_310_420/pictures/20/09/25/09/06/0492330.jpg",
+        "thumb/Gambito.jpg",
         "2020-10-23",
         [4, 8]);
     criarVideo(
@@ -128,7 +128,7 @@ class DbControls {
         0,
         "16 anos",
         94,
-        "https://br.web.img2.acsta.net/c_310_420/pictures/19/09/02/16/57/3762755.jpg",
+        "thumb/OPoco.jpg",
         "2019-11-08",
         [5, 8, 7]);
     criarVideo(
@@ -137,7 +137,7 @@ class DbControls {
         1,
         "Livre",
         11,
-        "https://br.web.img3.acsta.net/c_310_420/pictures/21/02/11/18/06/4506652.jpg",
+        "thumb/IrmaoJorel.jpg",
         "2014-09-22",
         [10]);
     criarVideo(
@@ -146,7 +146,7 @@ class DbControls {
         1,
         "16 anos",
         22,
-        "https://br.web.img2.acsta.net/c_310_420/pictures/17/11/06/14/13/5164749.jpg",
+        "thumb/RickeMorty.jpg",
         "2013-12-02",
         [2, 3, 5, 10]);
   }

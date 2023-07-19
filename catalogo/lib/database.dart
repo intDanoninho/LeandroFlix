@@ -14,13 +14,13 @@ class DatabaseHelper {
     _db = await initDb();
     return _db;
   }
-
+  
   DatabaseHelper.internal();
 
   Future<Database> initDb() async {
     String databasesPath = await getDatabasesPath();
     String path = join(databasesPath, 'mydatabase.db');
-
+    
 
     bool databaseExists = await databaseFactory.databaseExists(path);
     if (!databaseExists) {
