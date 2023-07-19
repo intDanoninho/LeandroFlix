@@ -21,56 +21,60 @@ class DatabaseHelper {
     String databasesPath = await getDatabasesPath();
     String path = join(databasesPath, 'mydatabase.db');
 
-    // Delete old database (if exists)
-    await deleteDatabase(path);
 
-    // Open/create the database at a given path
-    Database database = await openDatabase(
-      path,
-      version: 1,
-      onCreate: (Database db, int version) async {
-        await db.execute('''
-          CREATE TABLE user(
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL,
-            email TEXT NOT NULL,
-            password TEXT NOT NULL
-          )''');
+    bool databaseExists = await databaseFactory.databaseExists(path);
+    if (!databaseExists) {
+      // Se o banco de dados não existir, crie-o e realize as operações de criação das tabelas
+      _db = await openDatabase(
+        path,
+        version: 1,
+        onCreate: (Database db, int version) async {
+          await db.execute('''
+            CREATE TABLE user(
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              name TEXT NOT NULL,
+              email TEXT NOT NULL,
+              password TEXT NOT NULL
+            )''');
 
-        await db.execute('''CREATE TABLE genre(
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL
-          )''');
+          await db.execute('''CREATE TABLE genre(
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              name TEXT NOT NULL
+            )''');
 
-        await db.execute('''CREATE TABLE video(
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL,
-            description TEXT NOT NULL,
-            type INTEGER NOT NULL,
-            ageRestriction TEXT NOT NULL,
-            durationMinutes INTEGER NOT NULL,
-            thumbnailImageId TEXT NOT NULL,
-            releaseDate TEXT NOT NULL
-          )''');
+          await db.execute('''CREATE TABLE video(
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              name TEXT NOT NULL,
+              description TEXT NOT NULL,
+              type INTEGER NOT NULL,
+              ageRestriction TEXT NOT NULL,
+              durationMinutes INTEGER NOT NULL,
+              thumbnailImageId TEXT NOT NULL,
+              releaseDate TEXT NOT NULL
+            )''');
 
-        await db.execute('''CREATE TABLE video_genre(
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            videoid INTEGER NOT NULL,
-            genreid INTEGER NOT NULL,
-            FOREIGN KEY(videoid) REFERENCES video(id),
-            FOREIGN KEY(genreid) REFERENCES genre(id)
-          )''');
+          await db.execute('''CREATE TABLE video_genre(
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              videoid INTEGER NOT NULL,
+              genreid INTEGER NOT NULL,
+              FOREIGN KEY(videoid) REFERENCES video(id),
+              FOREIGN KEY(genreid) REFERENCES genre(id)
+            )''');
 
-        await db.execute('''CREATE TABLE user_video(
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            userid INTEGER NOT NULL,
-            videoid INTEGER NOT NULL,
-            FOREIGN KEY(userid) REFERENCES user(id),
-            FOREIGN KEY(videoid) REFERENCES video(id)
-          )''');
-      },
-    );
+          await db.execute('''CREATE TABLE user_video(
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              userid INTEGER NOT NULL,
+              videoid INTEGER NOT NULL,
+              FOREIGN KEY(userid) REFERENCES user(id),
+              FOREIGN KEY(videoid) REFERENCES video(id)
+            )''');
+        },
+      );
+    } else {
+      // Se o banco de dados já existir, abra-o
+      _db = await openDatabase(path, version: 1);
+    }
 
-    return database;
+    return _db!;
   }
 }

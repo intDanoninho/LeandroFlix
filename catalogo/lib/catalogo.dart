@@ -260,11 +260,13 @@ class _CatalogoState extends State<Catalogo> {
   Widget barraSuperior() {
     if (widget.user.id == -1) {
       return Container(
+        color: const Color(0xFF57585a),
         padding: const EdgeInsets.all(10.0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             ElevatedButton(
+              style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(Colors.red)),
               onPressed: () {
                 Navigator.push(
                   context,
@@ -277,6 +279,7 @@ class _CatalogoState extends State<Catalogo> {
               ]),
             ),
             ElevatedButton(
+              style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(Colors.red)),
               onPressed: () {
                 Navigator.pop(context);
               },
@@ -291,10 +294,12 @@ class _CatalogoState extends State<Catalogo> {
     } else {
       return Container(
         padding: const EdgeInsets.all(10.0),
+        color: const Color(0xFF57585a),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             ElevatedButton(
+                style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(Colors.red)),
                 onPressed: () {
                   Navigator.push(
                     context,
@@ -310,6 +315,7 @@ class _CatalogoState extends State<Catalogo> {
                 )),
             const Padding(padding: EdgeInsets.all(10.0)),
             ElevatedButton(
+              style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(Colors.red)),
               onPressed: () {
                 Navigator.pop(context);
               },
