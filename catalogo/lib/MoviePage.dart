@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-
+import 'model_video.dart';
 class MoviePage extends StatelessWidget{
+  final Video video ;
+  const MoviePage(this.video, {super.key});
   @override
   Widget build(BuildContext context){
     return Scaffold(
@@ -9,7 +11,7 @@ class MoviePage extends StatelessWidget{
         Opacity(
           opacity: 0.6,
           child: Image.asset(
-            "thumb/BomDia.jpg",
+            video.thumbnailImageId ,
             height: 200,
             width: double.infinity,
             fit:BoxFit.cover,
@@ -28,55 +30,38 @@ class MoviePage extends StatelessWidget{
                         onTap: (){
                           Navigator.pop(context);
                         },
-                        child:Icon(Icons.arrow_back),
+                        child:const Icon(Icons.arrow_back, color: Colors.red),
+                  
                       ),
                     ]
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: Row(
                     children: [
                 
-                      Container(
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(20),
-                          child: Image.asset(
-                            "thumb/BomDia.jpg",
-                            height: 250,
-                            width: 180,
-                          ),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(20),
+                        child: Image.asset(
+                          video.thumbnailImageId ,
+                          height: 250,
+                          width: 180,
                         ),
                       ),
-                      Container(
-                        child: const Padding(
-                          padding: EdgeInsets.symmetric(vertical:90, horizontal: 11),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Classificação: 16\nDuração: 88 minutos",
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                                
-                              ),
-                            ]
-                          ))),
+                      
                     ],
                   ),
                   ),
                   
-                  const Padding(
-                    padding: EdgeInsets.symmetric(vertical:20, horizontal: 10),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical:20, horizontal: 10),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Bom Dia, Verônica',
-                          style: TextStyle(
+                          video.name,
+                          style: const TextStyle(
                             color: Colors.black,
                             fontSize: 30,
                             fontWeight: FontWeight.w500,
@@ -84,15 +69,15 @@ class MoviePage extends StatelessWidget{
                           textAlign: TextAlign.center,
                         ),
                           Text(
-                          'Após presenciar um suicídio, a escrivã de polícia Verônica Torres (Tainá Müller) precisa lutar contra os traumas de seu passado e acaba tomando uma arriscada decisão: usar toda a sua habilidade investigativa para ajudar duas mulheres desconhecidas.',
-                          style: TextStyle(
+                          '\n${video.description}',
+                          style: const TextStyle(
                             color: Colors.black,
                             fontSize: 15,
                             fontWeight: FontWeight.w500,
                           ),
                           textAlign: TextAlign.justify,
                         ),
-                        SizedBox(height: 15),
+                        const SizedBox(height: 15),
                       ],
                     ),
                     )
@@ -100,9 +85,29 @@ class MoviePage extends StatelessWidget{
             ),
           ),
         ),
+           Align(
+            alignment: Alignment.topRight ,
+            
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 210, horizontal: 1) ,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    "Classificação: ${video.ageRestriction}\nDuração: ${video.durationMinutes} minutos\nLançado em: ${video.releaseDate}",
+                    style: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ],
-    ),
+      ),
     );
-
   }
 }
+

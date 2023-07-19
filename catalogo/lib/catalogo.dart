@@ -388,7 +388,7 @@ class _CatalogoState extends State<Catalogo> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                builder: (context) => MoviePage()));
+                                builder: (context) => MoviePage(video)));
                             },
                             child: Card(
                               child: Column(
