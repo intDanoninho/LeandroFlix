@@ -1,3 +1,4 @@
+
 import 'package:catalogo/model_user.dart';
 import 'package:catalogo/model_video.dart';
 import 'package:flutter/material.dart';
@@ -15,7 +16,52 @@ class _MyVideosState extends State<MyVideos> {
   List<Video> getMyVideos() {
     return [];
   }
+  List<String> filmInfo = ["Nome do filme", "Descrição", "Duração", "Classificação indicativa"];
+  final List<TextEditingController> textControllers = [
+    TextEditingController(),
+    TextEditingController(),
+    TextEditingController(),
+    TextEditingController(),
+  ];
+  Future<String?> showTextFieldDialog(BuildContext context, int i) {
+ 
 
+    return showDialog<String>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(filmInfo[i]),
+          content: TextField(
+            controller: textControllers[i],
+            decoration: const InputDecoration(hintText: 'Digite aqui...'),
+          ),
+          actions: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context); // Fechar o AlertDialog
+              },
+              child: const Text('Cancelar'),
+            ),
+            if(i<3)
+            ElevatedButton(
+              onPressed: () {
+                textControllers[i].text;
+                showTextFieldDialog(context, i+1);
+              },
+              child: const Text('Avançar'),
+            ),
+            if (i >= 3)
+            ElevatedButton(
+              onPressed: (){
+                Navigator.popUntil(context, (route) => route.settings.name == '/meus_videos');
+              },
+              child: Text('Criar'),
+            )  
+          ],
+        );
+      },
+    );
+  }
   Widget barraSuperior() {
     return Container(
       color: const Color(0xFF57585a),
@@ -25,7 +71,13 @@ class _MyVideosState extends State<MyVideos> {
         children: [
           ElevatedButton(
               style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(Colors.red)),
-              onPressed: () {},
+              onPressed: () {
+                showTextFieldDialog(context,  0);
+    
+            
+
+
+              },
               child: const Row(
                 children: [
                   Icon(Icons.add_circle_outline_sharp),

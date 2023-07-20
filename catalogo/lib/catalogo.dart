@@ -305,7 +305,8 @@ class _CatalogoState extends State<Catalogo> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => MyVideos(widget.user)),
+                        settings: const RouteSettings(name: '/meus_videos'),
+                        builder: (context, ) => MyVideos(widget.user)),
                   );
                 },
                 child: const Row(
