@@ -19,48 +19,46 @@ class MyVideos extends StatefulWidget {
 class _MyVideosState extends State<MyVideos> {
   List<Video> _myVideos = [];
 
-  loadVideos() async {
-    Database? db = await DatabaseHelper().db;
+  @override
+  void initState() {
+    super.initState();
+    _carregarVideos();
+  }
 
-    final List<Map<String, dynamic>> userVideosData =
-        await db!.rawQuery('SELECT * FROM user_video');
-    final List<UserVideo> loadedUserVideos = userVideosData
-        .map((item) => UserVideo(
+  Future<void> _carregarVideos() async {
+    final db = await DatabaseHelper().db;
+    final List<Map<String, dynamic>> usuariosVideos = await db!.rawQuery('''
+      SELECT * 
+      FROM video 
+      WHERE id IN (
+        SELECT videoid 
+        FROM user_video 
+        WHERE userid = ?
+      )
+      
+    ''', [widget.user.id]);
+
+    List<Video> videos = usuariosVideos
+        .map((item) => Video(
               id: item['id'],
-              userId: item['userid'],
-              videoId: item['videoid'],
+              name: item['name'],
+              description: item['description'],
+              type: item['type'],
+              ageRestriction: item['ageRestriction'],
+              durationMinutes: item['durationMinutes'],
+              thumbnailImageId: item['thumbnailImageId'],
+              releaseDate: item['releaseDate'],
             ))
         .toList();
 
-    List<Video> loadedVideos = [];
-
-    for (UserVideo vUser in loadedUserVideos) {
-      if (vUser.userId == widget.user.id) {
-        final List<Map<String, dynamic>> videoData = await db
-            .query('video', where: 'id = ?', whereArgs: [vUser.videoId]);
-        loadedVideos.add(videoData
-            .map((item) => Video(
-                  id: item['id'],
-                  name: item['name'],
-                  description: item['description'],
-                  type: item['type'],
-                  ageRestriction: item['ageRestriction'],
-                  durationMinutes: item['durationMinutes'],
-                  thumbnailImageId: item['thumbnailImageId'],
-                  releaseDate: item['releaseDate'],
-                ))
-            .toList()[0]);
-      }
-    }
-    if (mounted) {
-      setState(() {
-        _myVideos = loadedVideos;
-      });
-    }
+    setState(() {
+      _myVideos = videos;
+    });
   }
 
   List<Video> getMyVideos() {
-    loadVideos();
+    //loadVideos();
+    _carregarVideos();
     return _myVideos;
   }
 
@@ -143,93 +141,56 @@ class _MyVideosState extends State<MyVideos> {
                       child: barraSuperior(),
                     ),
                     const Padding(padding: EdgeInsets.all(10.0)),
-                    ListView.builder(
-                        shrinkWrap: true,
-                        itemBuilder: (context, index) {
-                          final List<Video> videos = getMyVideos();
-                          final item = videos[index];
-                          if (videos.isEmpty) {
-                            return const Center(
-                              child: Text("Nenhum video encontrado"),
-                            );
-                          }
-                          return Builder(builder: (context) {
-                            return Dismissible(
-                              key: Key(item.name),
-                              onDismissed: (direction) {
-                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                    content: Text(
-                                        "${item.name} removido com sucesso!")));
-                                SnackBar(
-                                  content: Text(
-                                      "${item.name} removido com sucesso!"),
-                                );
-                                DatabaseHelper()
-                                    .deleteUserVideo(item.id, widget.user.id);
-
-                                if (mounted) {
-                                  setState(() {
-                                    videos.removeAt(index);
-                                    if (videos.isEmpty) {}
-                                  });
-                                }
-                              },
-                              secondaryBackground: Container(
-                                color: Colors.green,
-                                child: const Align(
-                                  alignment: Alignment.centerRight,
-                                  child: Padding(
-                                    padding: EdgeInsets.only(
-                                      right: 16,
+                    Builder(builder: (context) {
+                      final List<Video> myVideos = getMyVideos();
+                      return ListView(
+                          shrinkWrap: true,
+                          children: myVideos
+                              .map((item) => Container(
+                                  margin:
+                                      const EdgeInsets.symmetric(vertical: 5),
+                                  decoration:
+                                      const BoxDecoration(color: Colors.white),
+                                  child: ListTile(
+                                    title: Text(item.name),
+                                    subtitle: Text(item.description),
+                                    leading: CircleAvatar(
+                                      backgroundImage:
+                                          AssetImage(item.thumbnailImageId),
                                     ),
-                                    child: Icon(
-                                      Icons.edit,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              background: Container(
-                                color: Colors.red,
-                                child: const Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Padding(
-                                    padding: EdgeInsets.only(
-                                      left: 16,
-                                    ),
-                                    child: Icon(
-                                      Icons.delete,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              child: Container(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 5),
-                                margin: const EdgeInsets.symmetric(vertical: 5),
-                                decoration:
-                                    const BoxDecoration(color: Colors.white),
-                                child: ListTile(
-                                  title: Text(item.name),
-                                  subtitle: Text(item.description),
-                                  leading: CircleAvatar(
-                                    backgroundImage:
-                                        AssetImage(item.thumbnailImageId),
-                                  ),
-                                  onTap: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                MoviePage(item)));
-                                  },
-                                ),
-                              ),
-                            );
-                          });
-                        },
-                        itemCount: getMyVideos().length),
+                                    trailing: SizedBox(
+                                        width: 100,
+                                        child: Row(
+                                          children: [
+                                            IconButton(
+                                                onPressed: () {},
+                                                icon: const Icon(Icons.edit)),
+                                            IconButton(
+                                                onPressed: () {
+                                                  DatabaseHelper()
+                                                      .deleteUserVideo(item.id,
+                                                          widget.user.id);
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(const SnackBar(
+                                                          content: Text(
+                                                              'Video removido com sucesso!')));
+                                                  setState(() {
+                                                    loadVideos();
+                                                  });
+                                                },
+                                                icon: const Icon(Icons.delete))
+                                          ],
+                                        )),
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  MoviePage(item)));
+                                    },
+                                  )))
+                              .toList());
+                    })
                   ])),
             ],
           ),

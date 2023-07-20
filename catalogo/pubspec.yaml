@@ -77,6 +77,7 @@ flutter:
     - thumb/ReiLeao.jpg
     - thumb/O_auto_da_compadecida.jpg
     - thumb/Gambito.jpg
+    - thumb/sem-foto.jpg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
