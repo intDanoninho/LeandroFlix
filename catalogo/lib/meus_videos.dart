@@ -1,12 +1,11 @@
 import 'package:catalogo/create_video.dart';
 import 'package:catalogo/database.dart';
+import 'package:catalogo/edit_video.dart';
 import 'package:catalogo/model_user.dart';
-import 'package:catalogo/model_uservideo.dart';
 import 'package:catalogo/model_video.dart';
 import 'package:catalogo/movie_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:sqflite/sqflite.dart';
 
 class MyVideos extends StatefulWidget {
   final User user;
@@ -163,7 +162,13 @@ class _MyVideosState extends State<MyVideos> {
                                         child: Row(
                                           children: [
                                             IconButton(
-                                                onPressed: () {},
+                                                onPressed: () {
+                                                  Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              EditVideo(item)));
+                                                },
                                                 icon: const Icon(Icons.edit)),
                                             IconButton(
                                                 onPressed: () {
@@ -175,7 +180,7 @@ class _MyVideosState extends State<MyVideos> {
                                                           content: Text(
                                                               'Video removido com sucesso!')));
                                                   setState(() {
-                                                    loadVideos();
+                                                    _carregarVideos();
                                                   });
                                                 },
                                                 icon: const Icon(Icons.delete))

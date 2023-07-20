@@ -1,4 +1,5 @@
 import 'package:catalogo/database.dart';
+import 'package:catalogo/model_video.dart';
 import 'package:sqflite/sqflite.dart';
 
 class DbControls {
@@ -40,6 +41,30 @@ class DbControls {
 
     if (id != -1) {
       await db.insert('user_video', {'userid': id, 'videoid': result});
+    }
+  }
+
+  editarVideo(Video video, List<int> genres) async {
+    Database? db = await DatabaseHelper().db;
+
+    await db!.update(
+        'video',
+        {
+          'name': video.name,
+          'description': video.description,
+          'type': video.type,
+          'ageRestriction': video.ageRestriction,
+          'durationMinutes': video.durationMinutes,
+          'thumbnailImageId': video.thumbnailImageId,
+          'releaseDate': video.releaseDate,
+        },
+        where: 'id = ?',
+        whereArgs: [video.id]);
+
+    await db.delete('video_genre', where: 'videoid = ?', whereArgs: [video.id]);
+
+    for (var genre in genres) {
+      await db.insert('video_genre', {'videoid': video.id, 'genreid': genre});
     }
   }
 

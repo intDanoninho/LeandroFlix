@@ -29,7 +29,7 @@ class _HomeState extends State<Home> {
   _list() async {
     Database? db = await DatabaseHelper().db;
 
-    String sql = "SELECT * FROM user_video;";
+    String sql = "SELECT * FROM genre;";
     //String sql = "SELECT * FROM usuarios WHERE idade < 20";
     //String sql = "SELECT * FROM usuarios WHERE idade > 20 AND idade < 25";
     //String sql = "SELECT * FROM usuarios WHERE idade BETWEEN 20 AND 25";
