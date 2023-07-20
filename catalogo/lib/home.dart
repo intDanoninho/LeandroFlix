@@ -29,7 +29,7 @@ class _HomeState extends State<Home> {
   _list() async {
     Database? db = await DatabaseHelper().db;
 
-    String sql = "SELECT * FROM user;";
+    String sql = "SELECT * FROM user_video;";
     //String sql = "SELECT * FROM usuarios WHERE idade < 20";
     //String sql = "SELECT * FROM usuarios WHERE idade > 20 AND idade < 25";
     //String sql = "SELECT * FROM usuarios WHERE idade BETWEEN 20 AND 25";
@@ -37,7 +37,7 @@ class _HomeState extends State<Home> {
     //String sql = "SELECT * FROM usuarios ORDER BY nome DESC";
 
     List usuarios = await db!.rawQuery(sql);
-    print("usuarios: ${usuarios.toString()}");
+    print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>: ${usuarios.toString()}");
   }
 
   _start() async {
@@ -60,7 +60,7 @@ class _HomeState extends State<Home> {
     );
 
     if (results.isNotEmpty) {
-      print("FUNCIONOU");
+      //print("FUNCIONOU");
       return User(
           id: results[0]['id'],
           name: results[0]['name'],
@@ -69,7 +69,7 @@ class _HomeState extends State<Home> {
 
       // to do redirecionar para a pagina do catalogo de videos
     } else {
-      print("email ou senha incorretos");
+      //print("email ou senha incorretos");
       return null;
       // to do pedir para o usuario tentar novamente
     }

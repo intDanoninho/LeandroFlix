@@ -1,4 +1,4 @@
-import 'package:catalogo/MoviePage.dart';
+import 'package:catalogo/movie_page.dart';
 import 'package:catalogo/model_video.dart';
 import 'package:catalogo/model_videogenero.dart';
 import 'package:catalogo/signin.dart';
@@ -68,12 +68,13 @@ class _CatalogoState extends State<Catalogo> {
         genreId: data['genreid'],
       );
     }).toList();
-
-    setState(() {
-      _videos = videos;
-      _generos = genres;
-      _videoGeneros = videoGenres;
-    });
+    if (mounted) {
+      setState(() {
+        _videos = videos;
+        _generos = genres;
+        _videoGeneros = videoGenres;
+      });
+    }
   }
 
   dynamic filtro() {
@@ -86,89 +87,86 @@ class _CatalogoState extends State<Catalogo> {
             return AlertDialog(
               title: const Text("Selecione os Filtros"),
               content: SingleChildScrollView(
-                child: Expanded(
-                  flex: 2,
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        const Text("Tipos",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(fontSize: 20.0)),
-                        const Padding(padding: EdgeInsets.all(5.0)),
-                        Column(
-                          children: [
-                            RadioListTile(
-                              title: const Row(
-                                children: [
-                                  Padding(padding: EdgeInsets.only(left: 60)),
-                                  Text("Todos"),
-                                ],
-                              ),
-                              value: 2,
-                              groupValue: _selectedType,
-                              onChanged: (int? value) {
-                                setState(() {
-                                  _selectedType = value!;
-                                });
-                              },
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const Text("Tipos",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 20.0)),
+                      const Padding(padding: EdgeInsets.all(5.0)),
+                      Column(
+                        children: [
+                          RadioListTile(
+                            title: const Row(
+                              children: [
+                                Padding(padding: EdgeInsets.only(left: 60)),
+                                Text("Todos"),
+                              ],
                             ),
-                            RadioListTile(
-                              title: const Row(
-                                children: [
-                                  Padding(padding: EdgeInsets.only(left: 60)),
-                                  Text("Filmes"),
-                                ],
-                              ),
-                              value: 0,
-                              groupValue: _selectedType,
-                              onChanged: (int? value) {
-                                setState(() {
-                                  _selectedType = value!;
-                                });
-                              },
+                            value: 2,
+                            groupValue: _selectedType,
+                            onChanged: (int? value) {
+                              setState(() {
+                                _selectedType = value!;
+                              });
+                            },
+                          ),
+                          RadioListTile(
+                            title: const Row(
+                              children: [
+                                Padding(padding: EdgeInsets.only(left: 60)),
+                                Text("Filmes"),
+                              ],
                             ),
-                            RadioListTile(
-                              title: const Row(
-                                children: [
-                                  Padding(padding: EdgeInsets.only(left: 60)),
-                                  Text("Series"),
-                                ],
-                              ),
-                              value: 1,
-                              groupValue: _selectedType,
-                              onChanged: (int? value) {
-                                setState(() {
-                                  _selectedType = value!;
-                                });
-                              },
+                            value: 0,
+                            groupValue: _selectedType,
+                            onChanged: (int? value) {
+                              setState(() {
+                                _selectedType = value!;
+                              });
+                            },
+                          ),
+                          RadioListTile(
+                            title: const Row(
+                              children: [
+                                Padding(padding: EdgeInsets.only(left: 60)),
+                                Text("Series"),
+                              ],
                             ),
-                          ],
-                        ),
-                        const Text("Generos",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(fontSize: 20.0)),
-                        const Padding(padding: EdgeInsets.all(5.0)),
-                        Column(
-                          children: _generos.map((genero) {
-                            return CheckboxListTile(
-                              title: Text(
-                                genero.name,
-                              ),
-                              value: _selectedGeneros.contains(genero.id),
-                              onChanged: (bool? value) {
-                                setState(() {
-                                  if (value != null && value) {
-                                    _selectedGeneros.add(genero.id);
-                                  } else {
-                                    _selectedGeneros.remove(genero.id);
-                                  }
-                                });
-                              },
-                            );
-                          }).toList(),
-                        ),
-                      ]),
-                ),
+                            value: 1,
+                            groupValue: _selectedType,
+                            onChanged: (int? value) {
+                              setState(() {
+                                _selectedType = value!;
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                      const Text("Generos",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 20.0)),
+                      const Padding(padding: EdgeInsets.all(5.0)),
+                      Column(
+                        children: _generos.map((genero) {
+                          return CheckboxListTile(
+                            title: Text(
+                              genero.name,
+                            ),
+                            value: _selectedGeneros.contains(genero.id),
+                            onChanged: (bool? value) {
+                              setState(() {
+                                if (value != null && value) {
+                                  _selectedGeneros.add(genero.id);
+                                } else {
+                                  _selectedGeneros.remove(genero.id);
+                                }
+                              });
+                            },
+                          );
+                        }).toList(),
+                      ),
+                    ]),
               ),
               actions: [
                 TextButton(
@@ -191,6 +189,7 @@ class _CatalogoState extends State<Catalogo> {
   }
 
   List<Video> getVideoFiltrado() {
+    _initDatabase();
     if (_selectedType == 0) {
       if (_selectedGeneros.isEmpty) {
         return _videos.where((video) => video.type == 0).toList();
@@ -267,7 +266,9 @@ class _CatalogoState extends State<Catalogo> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             ElevatedButton(
-              style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(Colors.red)),
+              style: ButtonStyle(
+                  backgroundColor:
+                      MaterialStateProperty.all<Color>(Colors.red)),
               onPressed: () {
                 Navigator.push(
                   context,
@@ -280,7 +281,9 @@ class _CatalogoState extends State<Catalogo> {
               ]),
             ),
             ElevatedButton(
-              style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(Colors.red)),
+              style: ButtonStyle(
+                  backgroundColor:
+                      MaterialStateProperty.all<Color>(Colors.red)),
               onPressed: () {
                 Navigator.pop(context);
               },
@@ -300,13 +303,18 @@ class _CatalogoState extends State<Catalogo> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             ElevatedButton(
-                style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(Colors.red)),
+                style: ButtonStyle(
+                    backgroundColor:
+                        MaterialStateProperty.all<Color>(Colors.red)),
                 onPressed: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
                         settings: const RouteSettings(name: '/meus_videos'),
-                        builder: (context, ) => MyVideos(widget.user)),
+                        builder: (
+                          context,
+                        ) =>
+                            MyVideos(widget.user)),
                   );
                 },
                 child: const Row(
@@ -317,7 +325,9 @@ class _CatalogoState extends State<Catalogo> {
                 )),
             const Padding(padding: EdgeInsets.all(10.0)),
             ElevatedButton(
-              style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(Colors.red)),
+              style: ButtonStyle(
+                  backgroundColor:
+                      MaterialStateProperty.all<Color>(Colors.red)),
               onPressed: () {
                 Navigator.pop(context);
               },
@@ -385,19 +395,19 @@ class _CatalogoState extends State<Catalogo> {
                         children: getVideoFiltrado().map((video) {
                           return GestureDetector(
                             onTap: () {
-                              print(video.thumbnailImageId);
+                              //print(video.thumbnailImageId);
                               Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                builder: (context) => MoviePage(video)));
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => MoviePage(video)));
                             },
                             child: Card(
                               child: Column(
                                 children: [
                                   Container(
                                     color: const Color(0xFF57585a),
-                                    height: 156, 
-                                    width: 200, 
+                                    height: 156,
+                                    width: 200,
                                     child: Image.asset(
                                       video.thumbnailImageId,
                                     ),

@@ -7,6 +7,14 @@ class DatabaseHelper {
 
   static Database? _db;
 
+  deleteUserVideo(int vId, int uId) async {
+    Database? db = await DatabaseHelper().db;
+
+    await db!.delete('user_video',
+        where: 'videoid = ? AND userid = ?', whereArgs: [vId, uId]);
+    await db.delete('video', where: 'id = ?', whereArgs: [vId]);
+  }
+
   Future<Database?> get db async {
     if (_db != null) {
       return _db;
@@ -14,13 +22,13 @@ class DatabaseHelper {
     _db = await initDb();
     return _db;
   }
-  
+
   DatabaseHelper.internal();
 
   Future<Database> initDb() async {
     String databasesPath = await getDatabasesPath();
+    print(databasesPath);
     String path = join(databasesPath, 'mydatabase.db');
-    
 
     bool databaseExists = await databaseFactory.databaseExists(path);
     if (!databaseExists) {

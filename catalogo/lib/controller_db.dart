@@ -18,7 +18,8 @@ class DbControls {
       int durationMinutes,
       String thumbnailImageId,
       String releaseDate,
-      List<int> genres) async {
+      List<int> genres,
+      {int id = -1}) async {
     Database? db = await DatabaseHelper().db;
 
     dynamic result = await db!.insert('video', {
@@ -31,10 +32,14 @@ class DbControls {
       'releaseDate': releaseDate,
     });
 
-    print("Filme: $result adicionado com sucesso!");
+    //print("Filme: $result adicionado com sucesso!");
 
     for (var genre in genres) {
       await db.insert('video_genre', {'videoid': result, 'genreid': genre});
+    }
+
+    if (id != -1) {
+      await db.insert('user_video', {'userid': id, 'videoid': result});
     }
   }
 
@@ -50,24 +55,10 @@ class DbControls {
     criarGenero("Musical"); //id 9
     criarGenero("Animação"); //id 10
 
-    criarVideo(
-        "O Rei Leão",
-        "Filme de animação",
-        0,
-        "Livre",
-        88,
-        "thumb/ReiLeao.jpg",
-        "1994-06-15",
-        [10, 2, 3, 9]);
-    criarVideo(
-        "O Auto da Compadecida",
-        "Filme de comédia",
-        0,
-        "Livre",
-        104,
-        "thumb/O_auto_da_compadecida.jpg",
-        "2000-09-15",
-        [2, 3]);
+    criarVideo("O Rei Leão", "Filme de animação", 0, "Livre", 88,
+        "thumb/ReiLeao.jpg", "1994-06-15", [10, 2, 3, 9]);
+    criarVideo("O Auto da Compadecida", "Filme de comédia", 0, "Livre", 104,
+        "thumb/O_auto_da_compadecida.jpg", "2000-09-15", [2, 3]);
     criarVideo(
         "Cidade de Deus",
         "O jovem Buscapé, vivendo na cidade de Deus, acaba se distanciando do crime por causa de seu talento como fotógrafo, seguindo caminho por sua profissão e analisando o dia-a-dia da favela",
